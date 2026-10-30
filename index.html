@@ -1,0 +1,27 @@
+<!doctype html><html lang="zh"><head><meta charset="utf-8"><title>软弹轴承管 参数化生成器</title>
+<style>
+body{margin:0;font:13px/1.4 system-ui,"PingFang SC","Microsoft YaHei",sans-serif;display:grid;grid-template-columns:370px 1fr;height:100vh;color:#222}
+#side{overflow:auto;padding:10px;background:#fff;border-right:1px solid #ddd}
+fieldset{border:1px solid #ddd;margin:0 0 8px;padding:6px}legend{font-weight:600}
+label{display:flex;justify-content:space-between;margin:3px 0}label input,label select{width:96px}
+#main{display:flex;flex-direction:column;height:100vh;min-width:0}#view{height:55vh;flex:none}#info{flex:1}
+#info{overflow:auto;padding:8px 12px;background:#fafbfc;border-top:1px solid #ddd}
+table{border-collapse:collapse;margin:4px 0 10px}td,th{border:1px solid #ddd;padding:3px 6px;text-align:left;font-weight:normal}th{background:#f0f2f5}
+button{margin:2px;padding:6px 10px;cursor:pointer}.ok{color:#18803c;font-weight:600}.bad{color:#c62828;font-weight:600}
+.note{color:#a15c00;background:#fff6e5;padding:6px;border-radius:4px}
+</style></head><body>
+<div id="side"><h3 style="margin:4px 0">软弹轴承管 参数化生成器</h3>
+<div><button id="gen">▶ 生成模型</button><button id="reset">恢复默认</button><label style="display:inline"><input type="checkbox" id="xray" checked> 透视</label></div>
+<div><label style="display:inline"><input type="checkbox" id="cmp"> 计算错角对比（慢）</label></div>
+<div><b>单元（打印）</b><button id="e1">单个单元 STEP</button><button id="e2">单个单元 STL</button><button id="e5">全部打印件种类 STL（含底座）</button></div>
+<div><b>底座</b><button id="e7">底座 STEP</button><button id="e8">底座 STL</button></div>
+<div><b>拼接整体</b><button id="e6">整管 STL（底座+单元）</button><button id="e9">整管 STEP（底座+单元）</button><button id="e3">装配 STEP（底座+单元+轴承）</button><button id="e4">轴承 STEP</button></div>
+<div id="status">…</div><form id="form" onsubmit="return false"></form></div>
+<div id="main"><div id="view"></div><div id="info">
+<div id="check"></div>
+<p class="note">⚠ 以下速度/自旋为<b>估算模型</b>（时间步进：库仑摩擦 + 轴承被带转 + 泡沫迟滞），泡沫刚度、μ、迟滞系数都是估计值，<b>必须用测速仪/高速摄像实测校准</b>，不能当实测值。改参数实时刷新；几何需点「生成模型」。</p>
+<table id="phys"></table>
+<b>扫描：吃深 × 层数（出口速度 / 自旋 rpm）</b><table id="sweep"></table>
+<b>扫描：倾斜角（出口速度 m/s / 自旋 rpm）</b><table id="sweepA"></table>
+</div></div>
+<script type="module" src="./lib/app.js"></script></body></html>

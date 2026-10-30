@@ -1,0 +1,8 @@
+.DS_Store
+node_modules/
+__pycache__/
+*.py[cod]
+out/
+out_py/
+*.log
+out_html/
