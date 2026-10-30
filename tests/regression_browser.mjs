@@ -18,7 +18,8 @@ const donateChk = async (tag) => { await page.evaluate(() => document.querySelec
     const cx = b.left + b.width / 2, cy = r.top + r.height / 2, hit = document.elementFromPoint(cx, cy);
     return { static: getComputedStyle(box).position === 'static', inExp: !!box.closest('#exp'), belowLic: b.top >= lic.bottom - 1, img: img.complete && img.naturalWidth > 50, visW: r.width >= 150, onTop: !!hit && box.contains(hit), coffee: box.innerText.includes('给个咖啡钱'), dona: box.innerText.includes('接受打赏'), wx: box.innerText.includes('Cmo1125076'), lic: document.body.innerText.includes('可免费用于个人使用'), ref: document.body.innerText.includes('仅供参考'), overSide: ov('#side'), overGen: ov('#gen'), overView: ov('#view'), noToggle: !document.querySelector('#donateToggle') }; });
   ok(`${tag}：收款码直接展开在导出区（授权声明）下方、图片已加载可见、无遮挡、文字 / 授权 / 微信号齐全`, d.static && d.inExp && d.belowLic && d.img && d.visW && d.onTop && d.coffee && d.dona && d.wx && d.lic && d.ref && !d.overSide && !d.overGen && !d.overView && d.noToggle, JSON.stringify(d)); await page.evaluate(() => scrollTo(0, 0)); };
-await donateChk('桌面');
+const starChk = async (tag) => { const g = await page.evaluate(() => { const a = document.querySelector('#ghStar a'); return { href: a?.href === 'https://github.com/momo1125076-afk/bearing-tube-generator', tgt: a?.target === '_blank', rel: (a?.rel || '').includes('noopener'), star: document.querySelector('#ghStar').innerText.includes('Star ⭐'), vis: a.getBoundingClientRect().width > 0 }; }); ok(`${tag}：GitHub 开源链接与 Star 文字`, Object.values(g).every(Boolean), JSON.stringify(g)); };
+await starChk('桌面'); await donateChk('桌面');
 const txt = await page.evaluate(() => document.body.innerText);
 ok('「模型仅供参考，实际效果以现实为准」可见', txt.includes('模型仅供参考，实际效果以现实为准'));
 ok('打赏码图片已加载', await page.$eval('#donate img', i => i.complete && i.naturalWidth > 50));
@@ -104,7 +105,7 @@ await page.click('#rvRun'); await page.waitForFunction(() => /应用/.test(docum
 ok('反推给出方案', true); await page.screenshot({ path: path.join(SHOTS, 'page_reverse.png') });
 await page.click('.tab[data-tab="manual"]');
 await page.setViewport({ width: 420, height: 900 }); await new Promise(r => setTimeout(r, 400));
-await donateChk('窄屏'); await page.screenshot({ path: path.join(SHOTS, 'page_narrow_donate.png') });
+await starChk('窄屏'); await donateChk('窄屏'); await page.screenshot({ path: path.join(SHOTS, 'page_narrow_donate.png') });
 ok('窄屏变单栏', await page.evaluate(() => document.querySelector('#side').getBoundingClientRect().top > document.querySelector('#view').getBoundingClientRect().bottom));
 await page.screenshot({ path: path.join(SHOTS, 'page_narrow.png'), fullPage: false });
 ok('无页面 JS 报错', errs.length === 0, errs.join(' | '));

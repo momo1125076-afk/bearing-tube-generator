@@ -1,5 +1,7 @@
 # 软弹轴承管 参数化生成器（v6：打印悬垂斜面处理 + 页面说明/对齐）
 
+> 开源地址：[GitHub · bearing-tube-generator](https://github.com/momo1125076-afk/bearing-tube-generator)　如果觉得好用，请给我的 GitHub 点一个 Star ⭐
+
 > ⚠ **模型仅供参考，实际效果以现实为准。**
 
 ## v6 更新
@@ -127,6 +129,10 @@
 ## 授权声明 / 打赏
 
 本工具及生成的模型可免费用于个人使用和个人打印；如需售卖（包括出售本工具、生成的模型或打印成品），需要获得作者授权。授权 / 售卖请联系 **微信：Cmo1125076**。
+
+完整授权条款见仓库根目录 [LICENSE](LICENSE)（自定义非商业授权，非 OSI 开源许可证）。
+
+开源地址：[GitHub · bearing-tube-generator](https://github.com/momo1125076-afk/bearing-tube-generator)　如果觉得好用，请给我的 GitHub 点一个 Star ⭐
 
 模型仅供参考，实际效果以现实为准。
 
