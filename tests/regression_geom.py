@@ -37,7 +37,9 @@ for M in ['A', 'B']:
         ok(f'{M}: 衔接斜面下移 {last["slopeDrop"]} mm（叠加层单元向下包裹）', max(hs) >= pitch + last['slopeDrop'] - 0.1, f'单元高度 {hs}')
     # 圆形底座：外形为 Ø tubeOD 圆柱（X/Z 向尺寸相等）
     bm = trimesh.load(os.path.join(D, f'{M}3_base.stl')); ex = bm.bounds[1] - bm.bounds[0]
-    ok(f'{M}: 底座为圆形（X/Z 外径相等）', abs(ex[0] - ex[2]) < 0.05 and abs(ex[0] - last['tubeOD']) < 0.1, f'{ex[0]:.2f} × {ex[2]:.2f}')
+    af = float(last.get('tubeAF') or 0)
+    if af > 0: ok(f'{M}: 底座外形 Ø{last["tubeOD"]} ∩ 六角对边 {af}（对齐参考 STEP）', abs(ex[0] - last['tubeOD']) < 0.1 and abs(ex[2] - af) < 0.1, f'{ex[0]:.2f} × {ex[2]:.2f}')
+    else: ok(f'{M}: 底座为圆形（X/Z 外径相等）', abs(ex[0] - ex[2]) < 0.05 and abs(ex[0] - last['tubeOD']) < 0.1, f'{ex[0]:.2f} × {ex[2]:.2f}')
     # 整体打印（组装态）导出
     wf = os.path.join(D, f'{M}3_whole.stl')
     if os.path.exists(wf):
@@ -45,6 +47,14 @@ for M in ['A', 'B']:
         ohw = a_[(n_[:, 1] < -np.cos(np.radians(44.5))) & (c_[:, 1] > wm.bounds[0][1] + last['baseT'] - 0.6)].sum()
         ok(f'{M}: 整体打印 STL 水密且为 1 个实体', wm.is_watertight and len(wm.split(only_watertight=False)) == 1, f'{wm.volume:.0f} mm³')
         ok(f'{M}: 整体打印 底座以上陡悬垂 <25 mm²', ohw < 25, f'{ohw:.2f} mm²')
+        if float(last.get('tieCount') or 0) > 0 and float(last.get('tieThru') or 0) > 0:   # 贯通长螺丝通孔：沿孔轴从底到顶全部是空的
+            ys = np.linspace(wm.bounds[0][1] + 0.2, wm.bounds[1][1] - 0.2, 200); n = int(last.get('tieNum') or 3); N = int(last.get('perLayer') or 3); r = float(last['tieR']); bad = []
+            for i in range(n):
+                k = round(i * N / n) % N; th = np.radians(-0.33 + float(last['tieOffsetDeg']) + k * 360 / N)
+                pts = np.c_[np.full_like(ys, r * np.cos(th)), ys, np.full_like(ys, -r * np.sin(th))]
+                bad.append(int(wm.contains(pts).sum()))
+                ring = np.c_[r * np.cos(th) + (float(last['reinfHoleD']) / 2 + 0.25) * np.cos(np.linspace(0, 6.28, 12)), np.full(12, 15 - last['baseT']), -r * np.sin(th) + (float(last['reinfHoleD']) / 2 + 0.25) * np.sin(np.linspace(0, 6.28, 12))]
+            ok(f'{M}: 整体打印件 {n} 个 Ø{last["reinfHoleD"]} 长螺丝孔从底座底面贯通到顶面', all(b == 0 for b in bad), f'孔轴上实体采样点 {bad}')
         WHOLE[M] = wm
     else: ok(f'{M}: 整体打印 STL 已导出', False)
     # O 圈槽：底座插管内孔在两道槽高度处半径扩大到 槽底Ø/2

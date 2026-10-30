@@ -23,7 +23,7 @@ details.psec>label.fld{margin:4px 10px}
 #genbar{grid-area:gen;display:grid;grid-template-columns:minmax(240px,360px);gap:10px;padding:8px 12px;background:#fff;border-top:1px solid #ddd;align-items:start}
 #genbar .gcol{display:flex;flex-direction:column}
 
-#bottomCards{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:10px;align-items:start;margin-top:8px}
+#bottomCards{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;align-items:start;margin-top:8px}
 @media (max-width:900px){body,body.sideLeft{grid-template-columns:1fr;grid-template-areas:"main" "side";height:auto;overflow:auto}#side{border:0;border-top:1px solid #ddd}#main{height:auto;grid-template-columns:1fr;grid-template-rows:auto;grid-template-areas:"view" "gen" "exp" "info"}#view{height:60vh}#exp{border-left:0}#genbar{grid-template-columns:1fr}#info{flex:none}#bottomCards{grid-template-columns:1fr}}
 #info{overflow:auto;padding:8px 12px;background:#fafbfc;border-top:1px solid #ddd}
 table{border-collapse:collapse;margin:4px 0 10px}td,th{border:1px solid #ddd;padding:3px 6px;text-align:left;font-weight:normal}th{background:#f0f2f5}
@@ -55,7 +55,10 @@ button:not(#gen) .spin{border-color:rgba(0,0,0,.15);border-top-color:#2f6fd0;wid
 .rvt{width:100%;font-size:12px}.rvt td,.rvt th{padding:2px 3px}.rvt tr.best{background:#eaf7ee}.rvt button{display:block;width:100%;margin:1px 0;padding:2px 4px;font-size:11px}
 .hint{color:#666;font-size:12px;margin:4px 0}
 .sec{font-weight:700;color:#2f6fd0;margin:10px 0 2px;font-size:14px}
+#donate{position:fixed;top:6px;right:8px;z-index:50;background:#fff7f9;border:1px solid #f3d2d8;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.15);font-size:12px;max-width:min(260px,calc(100vw - 16px))}#donateToggle{display:flex;align-items:center;gap:6px;border:0;background:none;padding:4px 8px;margin:0;cursor:pointer;font-size:12px;color:#a33;font-weight:700}#donate .dthumb{width:32px;height:32px;object-fit:cover;border-radius:4px}#donate .dbig{padding:4px 10px 10px;text-align:center}#donate .dimg{width:220px;max-width:100%;margin-top:4px}#donate.collapsed .dbig{display:none}#donate:not(.collapsed) .dar{transform:rotate(180deg)}body:not(.sideLeft) #side{padding-top:52px}body.sideLeft #exp{padding-top:52px}
+@media (max-width:900px){body:not(.sideLeft) #side,body.sideLeft #exp{padding-top:10px}#donate .dcap{max-width:150px}}
 </style></head><body>
+<div id="donate" class="collapsed"><button type="button" id="donateToggle" title="点开看大图 / 收起"><img src="./assets/donate.jpg" alt="微信收款码" class="dthumb"><span class="dcap">dalao 觉得好用，给个咖啡钱 ☕</span><span class="dar">▾</span></button><div class="dbig"><b>接受打赏</b><br><img src="./assets/donate.jpg" alt="微信收款码（大图）" class="dimg"><br><span style="color:#888;font-size:12px">微信扫码 · 微信：Cmo1125076</span></div></div>
 <div id="main"><div id="view"></div>
 <div id="genbar"><div class="gcol"><div class="sec" style="margin:0 0 2px">② 生成</div>
 <button id="gen" disabled><span class="spin"></span>内核加载中…</button>
@@ -68,7 +71,9 @@ button:not(#gen) .spin{border-color:rgba(0,0,0,.15);border-top-color:#2f6fd0;wid
 <div class="btns main1 fusedOnly"><button id="e11" class="primary">⬇ 融合整体 STEP</button><button id="e10">融合整体 STL</button></div>
 <div class="grp splitOnly">分件（单元 / 底座）</div><div class="btns splitOnly"><button id="e1">单个单元 STEP</button><button id="e2">单个单元 STL</button><button id="e5">全部单元种类 STL</button><button id="e7">底座 STEP</button><button id="e8">底座 STL</button></div>
 <div class="grp splitOnly">分件拼接 / 装配</div><div class="btns splitOnly"><button id="e9">分件拼接 STEP</button><button id="e6">分件拼接 STL</button><button id="e3">装配 STEP（含轴承）</button><button id="e4">轴承 STEP</button></div>
-<p class="hint fusedOnly" style="margin:6px 0 0">融合整体：A 模式需按结果区给出的高度暂停放轴承；B 模式打完后从外侧槽推入轴承。</p></div>
+<p class="hint fusedOnly" style="margin:6px 0 0">融合整体：A 模式需按结果区给出的高度暂停放轴承；B 模式打完后从外侧槽推入轴承。</p>
+
+<div id="license" style="margin-top:8px;padding:8px;border:1px solid #d9d9d9;background:#fafafa;border-radius:6px;font-size:12px;color:#444"><b>授权声明</b>：本工具及生成的模型可免费用于个人使用和个人打印；如需售卖（包括出售本工具、生成的模型或打印成品），需要获得作者授权。授权 / 售卖请联系 <b>微信：Cmo1125076</b><br><span style="color:#b71c1c">模型仅供参考，实际效果以现实为准。</span></div></div>
 <div id="info"><div class="sec" style="margin-top:0">④ 设置值 / 结果</div>
 <div style="position:sticky;top:0;z-index:5;background:#fdecea;color:#b71c1c;font-weight:700;padding:6px 8px;border:1px solid #f5c2c0;border-radius:4px;margin-bottom:6px">⚠ 模型仅供参考，实际效果以现实为准（尤其是速度与自旋估算）</div><div id="check"></div>
 <p class="note"><b style="color:#b71c1c">模型仅供参考，实际效果以现实为准。</b>⚠ 以下速度/自旋为<b>估算模型</b>（时间步进：库仑摩擦 + 轴承被带转 + 泡沫迟滞），泡沫刚度、μ、迟滞系数都是估计值，<b>必须用测速仪/高速摄像实测校准</b>，不能当实测值。改参数实时刷新；几何需点「生成模型」。</p>
@@ -91,7 +96,7 @@ button:not(#gen) .spin{border-color:rgba(0,0,0,.15);border-top-color:#2f6fd0;wid
 </div>
 <div id="shareMsg"></div>
 </div>
-<div id="donate" style="margin:0;padding:8px;border:1px solid #f3d2d8;background:#fff7f9;border-radius:6px;text-align:center"><b>接受打赏</b><br><span style="color:#555">如果这个工具对你有帮助，欢迎打赏 ❤</span><br><img src="./assets/donate.jpg" alt="微信收款码" style="width:180px;max-width:100%;margin-top:4px"><br><span style="color:#888;font-size:12px">微信扫码</span></div></div></div></div>
+</div><div id="licenseFoot" style="margin-top:8px;padding:8px;border:1px solid #d9d9d9;background:#fafafa;border-radius:6px;font-size:12px;color:#444"><b>授权声明</b>：本工具及生成的模型可免费用于个人使用和个人打印；如需售卖（包括出售本工具、生成的模型或打印成品），需要获得作者授权。授权 / 售卖请联系 <b>微信：Cmo1125076</b><br><span style="color:#b71c1c">模型仅供参考，实际效果以现实为准。</span></div></div></div>
 <div id="side"><h3 style="margin:4px 0;display:flex;align-items:center">软弹轴承管 参数化生成器<button type="button" id="swapSide" title="把参数栏换到另一边" style="margin-left:auto;font-size:12px;padding:3px 8px">⇄ 换边</button></h3>
 <details id="about"><summary>项目说明（点击展开）</summary>
 <p style="margin:4px 0">软弹（泡沫弹）<b>轴承管</b>参数化生成器：软弹出管时经过多层倾斜的 MF63ZZ 法兰轴承，被法兰搓出自旋。可调吃深、倾斜角、每层数量、层数，自动算紧邻层距、检查干涉，并估算过管后的速度与自旋，导出可直接打印的 STL / STEP。</p>
