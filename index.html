@@ -1,27 +1,127 @@
 <!doctype html><html lang="zh"><head><meta charset="utf-8"><title>软弹轴承管 参数化生成器</title>
 <style>
-body{margin:0;font:13px/1.4 system-ui,"PingFang SC","Microsoft YaHei",sans-serif;display:grid;grid-template-columns:370px 1fr;height:100vh;color:#222}
-#side{overflow:auto;padding:10px;background:#fff;border-right:1px solid #ddd}
-fieldset{border:1px solid #ddd;margin:0 0 8px;padding:6px}legend{font-weight:600}
-label{display:flex;justify-content:space-between;margin:3px 0}label input,label select{width:96px}
-#main{display:flex;flex-direction:column;height:100vh;min-width:0}#view{height:55vh;flex:none}#info{flex:1}
+body{margin:0;font:13px/1.4 system-ui,"PingFang SC","Microsoft YaHei",sans-serif;display:grid;grid-template-columns:minmax(0,1fr) 400px;grid-template-areas:"main side";height:100vh;color:#222;overflow:hidden}
+body.sideLeft{grid-template-columns:400px minmax(0,1fr);grid-template-areas:"side main"}
+#side{grid-area:side;overflow:auto;padding:10px;background:#fff;border-left:1px solid #ddd;min-height:0}body.sideLeft #side{border-left:0;border-right:1px solid #ddd}
+#main{grid-area:main}
+label.fld{display:grid;grid-template-columns:1fr 110px;column-gap:6px;align-items:center;margin:4px 0}label.fld input,label.fld select{width:100%;box-sizing:border-box}
+label.fld .tip{grid-column:1/-1;color:#888;font-size:11px;line-height:1.3}
+.btns{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px;margin:2px 0 6px}
+.btns button{margin:0;width:100%;min-height:32px;box-sizing:border-box}
+.grp{font-weight:600;margin:4px 0 2px;color:#334;font-size:12px}
+.chk{display:flex;flex-wrap:wrap;gap:4px 14px;margin:2px 0 6px;align-items:center}
+#about{background:#f6f8fb;border:1px solid #dde3ec;border-radius:6px;padding:6px 10px;margin:6px 0}#about summary{cursor:pointer;font-weight:600}#about ol,#about ul{margin:4px 0;padding-left:18px}
+details.psec{border:1px solid #d5deea;border-radius:6px;margin:0 0 6px;background:#fff}
+details.psec>summary{cursor:pointer;list-style:none;padding:7px 10px;font-weight:600;color:#234;background:#f1f5fb;border-radius:6px;display:flex;align-items:center;gap:6px;user-select:none}
+details.psec>summary::-webkit-details-marker{display:none}
+details.psec>summary::before{content:"▸";color:#2f6fd0;transition:transform .15s}details.psec[open]>summary::before{transform:rotate(90deg)}
+details.psec[open]>summary{border-bottom:1px solid #d5deea;border-radius:6px 6px 0 0}
+details.psec>summary .cnt{margin-left:auto;color:#8892a0;font-weight:400;font-size:11px}
+details.psec>label.fld{margin:4px 10px}
+.secbar{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0}.secbar button{margin:0;min-height:30px}
+#main{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,340px);grid-template-rows:minmax(320px,1fr) auto 36vh;grid-template-areas:"view exp" "gen exp" "info info";height:100vh;min-width:0;min-height:0}#view{grid-area:view;min-height:320px;position:relative;overflow:hidden}#exp{grid-area:exp;overflow:auto;padding:10px 12px;background:#fff;border-left:1px solid #ddd}#exp .btns{grid-template-columns:1fr 1fr}#exp .btns.main1 button.primary{grid-column:1/-1;min-height:46px;font-size:15px;font-weight:700;background:#2f6fd0;color:#fff;border-color:#2f6fd0}#info{grid-area:info;overflow:auto}.pmode{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;padding:6px 8px;margin:0 0 6px;background:#eef3fb;border:1px solid #c9d8f0;border-radius:6px}.pmode label{cursor:pointer}body.modeSplit .fusedOnly,body:not(.modeSplit) .splitOnly{display:none!important}#view canvas{position:absolute;left:0;top:0}
+#genbar{grid-area:gen;display:grid;grid-template-columns:minmax(240px,360px);gap:10px;padding:8px 12px;background:#fff;border-top:1px solid #ddd;align-items:start}
+#genbar .gcol{display:flex;flex-direction:column}
+
+#bottomCards{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:10px;align-items:start;margin-top:8px}
+@media (max-width:900px){body,body.sideLeft{grid-template-columns:1fr;grid-template-areas:"main" "side";height:auto;overflow:auto}#side{border:0;border-top:1px solid #ddd}#main{height:auto;grid-template-columns:1fr;grid-template-rows:auto;grid-template-areas:"view" "gen" "exp" "info"}#view{height:60vh}#exp{border-left:0}#genbar{grid-template-columns:1fr}#info{flex:none}#bottomCards{grid-template-columns:1fr}}
 #info{overflow:auto;padding:8px 12px;background:#fafbfc;border-top:1px solid #ddd}
 table{border-collapse:collapse;margin:4px 0 10px}td,th{border:1px solid #ddd;padding:3px 6px;text-align:left;font-weight:normal}th{background:#f0f2f5}
-button{margin:2px;padding:6px 10px;cursor:pointer}.ok{color:#18803c;font-weight:600}.bad{color:#c62828;font-weight:600}
+button{margin:2px;padding:6px 10px;cursor:pointer;border:1px solid #bbc4d0;border-radius:4px;background:#f7f9fc}button:hover{background:#e9eff7}#gen{background:#2f6fd0;color:#fff;border-color:#2f6fd0}.ok{color:#18803c;font-weight:600}.bad{color:#c62828;font-weight:600}
 .note{color:#a15c00;background:#fff6e5;padding:6px;border-radius:4px}
+#shareBox{margin:8px 0;padding:8px;border:1px solid #c5d4ea;background:#f4f8fd;border-radius:6px}
+#shareBox h4{margin:0 0 4px;font-size:13px}
+#shareBox .hint{color:#555;font-size:12px;margin:2px 0 6px}
+#shareBox textarea{width:100%;box-sizing:border-box;height:56px;font:12px/1.3 ui-monospace,Menlo,Consolas,monospace;resize:vertical}
+#shareBox .row{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:6px;margin:6px 0;align-items:center}#shareBox .row button{margin:0;width:100%;min-height:32px}
+#shareMsg{min-height:1.2em;font-size:12px;margin-top:2px}
+#shareMsg.ok{color:#18803c}#shareMsg.bad{color:#c62828}
+
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:8px 0 0;border-bottom:2px solid #2f6fd0}
+.tab{margin:0;border-radius:6px 6px 0 0;border:1px solid #c5d4ea;border-bottom:0;background:#eef3fa;font-weight:600;min-height:36px;color:#335}
+.tab.active{background:#2f6fd0;color:#fff;border-color:#2f6fd0}
+.tabpane{border:1px solid #c5d4ea;border-top:0;padding:6px;margin-bottom:8px;border-radius:0 0 6px 6px}
+#gen{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin:6px 0 4px;min-height:54px;font-size:18px;font-weight:700;letter-spacing:1px;background:linear-gradient(#3a7de0,#2a62c0);color:#fff;border:0;border-radius:8px;box-shadow:0 3px 10px rgba(47,111,208,.35)}
+#gen:hover:not(:disabled){filter:brightness(1.08)}#gen:disabled{cursor:progress;opacity:.85}
+.spin{display:inline-block;width:18px;height:18px;border:3px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite;vertical-align:middle}
+button:not(#gen) .spin{border-color:rgba(0,0,0,.15);border-top-color:#2f6fd0;width:12px;height:12px;border-width:2px;margin-right:4px}
+@keyframes sp{to{transform:rotate(360deg)}}
+#loadbar{height:6px;background:#e3eaf5;border-radius:3px;overflow:hidden;margin:4px 0}#loadbar i{display:block;height:100%;width:35%;background:#2f6fd0;border-radius:3px;animation:lb 1.3s ease-in-out infinite}
+@keyframes lb{0%{margin-left:-35%}100%{margin-left:100%}}
+.pbar{height:6px;background:#e3eaf5;border-radius:3px;overflow:hidden;margin:4px 0}.pbar i{display:block;height:100%;background:#2f6fd0}
+#status{font-weight:600;color:#335;margin:2px 0 8px}
+.rvin label.fld{grid-template-columns:1fr 110px}
+#rvRun{width:100%;min-height:40px;font-weight:700;background:#e9f1fc;border-color:#2f6fd0;color:#1f4f9e}
+.rvt{width:100%;font-size:12px}.rvt td,.rvt th{padding:2px 3px}.rvt tr.best{background:#eaf7ee}.rvt button{display:block;width:100%;margin:1px 0;padding:2px 4px;font-size:11px}
+.hint{color:#666;font-size:12px;margin:4px 0}
+.sec{font-weight:700;color:#2f6fd0;margin:10px 0 2px;font-size:14px}
 </style></head><body>
-<div id="side"><h3 style="margin:4px 0">软弹轴承管 参数化生成器</h3>
-<div><button id="gen">▶ 生成模型</button><button id="reset">恢复默认</button><label style="display:inline"><input type="checkbox" id="xray" checked> 透视</label></div>
-<div><label style="display:inline"><input type="checkbox" id="cmp"> 计算错角对比（慢）</label></div>
-<div><b>单元（打印）</b><button id="e1">单个单元 STEP</button><button id="e2">单个单元 STL</button><button id="e5">全部打印件种类 STL（含底座）</button></div>
-<div><b>底座</b><button id="e7">底座 STEP</button><button id="e8">底座 STL</button></div>
-<div><b>拼接整体</b><button id="e6">整管 STL（底座+单元）</button><button id="e9">整管 STEP（底座+单元）</button><button id="e3">装配 STEP（底座+单元+轴承）</button><button id="e4">轴承 STEP</button></div>
-<div id="status">…</div><form id="form" onsubmit="return false"></form></div>
-<div id="main"><div id="view"></div><div id="info">
-<div id="check"></div>
-<p class="note">⚠ 以下速度/自旋为<b>估算模型</b>（时间步进：库仑摩擦 + 轴承被带转 + 泡沫迟滞），泡沫刚度、μ、迟滞系数都是估计值，<b>必须用测速仪/高速摄像实测校准</b>，不能当实测值。改参数实时刷新；几何需点「生成模型」。</p>
+<div id="main"><div id="view"></div>
+<div id="genbar"><div class="gcol"><div class="sec" style="margin:0 0 2px">② 生成</div>
+<button id="gen" disabled><span class="spin"></span>内核加载中…</button>
+<div id="loadbar"><i></i></div>
+<div id="status">…</div></div>
+</div>
+<div id="exp"><div class="sec" style="margin:0 0 4px">③ 导出</div>
+<div class="pmode"><b>生成方式：</b><label><input type="radio" name="pmode" value="1" checked> 融合为单一实体（默认）</label><label><input type="radio" name="pmode" value="0"> 拆分为多件</label></div>
+<div class="grp fusedOnly">★ 融合整体（推荐：底座 + 全部层布尔合并为 1 个实体，直接打印）</div>
+<div class="btns main1 fusedOnly"><button id="e11" class="primary">⬇ 融合整体 STEP</button><button id="e10">融合整体 STL</button></div>
+<div class="grp splitOnly">分件（单元 / 底座）</div><div class="btns splitOnly"><button id="e1">单个单元 STEP</button><button id="e2">单个单元 STL</button><button id="e5">全部单元种类 STL</button><button id="e7">底座 STEP</button><button id="e8">底座 STL</button></div>
+<div class="grp splitOnly">分件拼接 / 装配</div><div class="btns splitOnly"><button id="e9">分件拼接 STEP</button><button id="e6">分件拼接 STL</button><button id="e3">装配 STEP（含轴承）</button><button id="e4">轴承 STEP</button></div>
+<p class="hint fusedOnly" style="margin:6px 0 0">融合整体：A 模式需按结果区给出的高度暂停放轴承；B 模式打完后从外侧槽推入轴承。</p></div>
+<div id="info"><div class="sec" style="margin-top:0">④ 设置值 / 结果</div>
+<div style="position:sticky;top:0;z-index:5;background:#fdecea;color:#b71c1c;font-weight:700;padding:6px 8px;border:1px solid #f5c2c0;border-radius:4px;margin-bottom:6px">⚠ 模型仅供参考，实际效果以现实为准（尤其是速度与自旋估算）</div><div id="check"></div>
+<p class="note"><b style="color:#b71c1c">模型仅供参考，实际效果以现实为准。</b>⚠ 以下速度/自旋为<b>估算模型</b>（时间步进：库仑摩擦 + 轴承被带转 + 泡沫迟滞），泡沫刚度、μ、迟滞系数都是估计值，<b>必须用测速仪/高速摄像实测校准</b>，不能当实测值。改参数实时刷新；几何需点「生成模型」。</p>
 <table id="phys"></table>
 <b>扫描：吃深 × 层数（出口速度 / 自旋 rpm）</b><table id="sweep"></table>
 <b>扫描：倾斜角（出口速度 m/s / 自旋 rpm）</b><table id="sweepA"></table>
-</div></div>
-<script type="module" src="./lib/app.js"></script></body></html>
+
+<div id="bottomCards"><div id="shareBox">
+<h4>分享 / 导入参数</h4>
+<p class="hint">把链接发给别人，对方打开后可按同样参数生成模型（相当于参数驱动的可复现教程）。</p>
+<div class="row">
+<button type="button" id="btnCopyCode">复制分享码</button>
+<button type="button" id="btnCopyLink">复制分享链接</button>
+<button type="button" id="btnWriteHash">写入地址栏</button>
+</div>
+<textarea id="shareIO" placeholder="粘贴分享码，或整段分享链接（含 #p=… / ?p=…）"></textarea>
+<div class="row">
+<button type="button" id="btnImport">导入参数</button>
+<label style="grid-column:span 2"><input type="checkbox" id="importAutoGen" checked> 导入后自动生成模型</label>
+</div>
+<div id="shareMsg"></div>
+</div>
+<div id="donate" style="margin:0;padding:8px;border:1px solid #f3d2d8;background:#fff7f9;border-radius:6px;text-align:center"><b>接受打赏</b><br><span style="color:#555">如果这个工具对你有帮助，欢迎打赏 ❤</span><br><img src="./assets/donate.jpg" alt="微信收款码" style="width:180px;max-width:100%;margin-top:4px"><br><span style="color:#888;font-size:12px">微信扫码</span></div></div></div></div>
+<div id="side"><h3 style="margin:4px 0;display:flex;align-items:center">软弹轴承管 参数化生成器<button type="button" id="swapSide" title="把参数栏换到另一边" style="margin-left:auto;font-size:12px;padding:3px 8px">⇄ 换边</button></h3>
+<details id="about"><summary>项目说明（点击展开）</summary>
+<p style="margin:4px 0">软弹（泡沫弹）<b>轴承管</b>参数化生成器：软弹出管时经过多层倾斜的 MF63ZZ 法兰轴承，被法兰搓出自旋。可调吃深、倾斜角、每层数量、层数，自动算紧邻层距、检查干涉，并估算过管后的速度与自旋，导出可直接打印的 STL / STEP。</p>
+<b>怎么用</b><ol><li>在右侧「① 输入参数」选：<b>手动参数生成</b>（直接改各项）或 <b>按目标反推</b>（输入初速/蛋重/目标出口速度，自动给出方案后点「应用」）</li><li>点预览下方的「▶ 生成模型」，看 3D 预览和「无干涉」检查</li><li>按需导出：<b>打印用「全部打印件种类 STL」或单个单元 STL</b>；改设计用 STEP</li><li>用「分享 / 导入参数」把参数发给别人复现</li></ol>
+<b>两种单元模式</b><ul><li><b>A 半开放叠加</b>：扇形柱一侧托住轴承，另一侧敞开直接装；M3×8 + 垫片拧进 Ø2.8 孔，更轻、层距更短</li><li><b>B 封闭单元</b>：轴承从侧槽装入腔内，上孔壁 4 mm，M3 直接拧进打印件，更结实</li></ul>
+<b>打印提示</b>：单元管轴竖直、底面贴打印台打印；默认开启「打印悬垂处理」，倾斜孔/腔顶做成尖顶斜面，免支撑。整管 STL 是零件贴合，不能直接切片。<br>
+<b style="color:#b71c1c">⚠ 模型仅供参考，实际效果以现实为准。</b></details>
+<div class="sec">① 输入参数</div>
+<div class="secbar"><button type="button" id="secOpenAll">▾ 全部展开</button><button type="button" id="secCloseAll">▸ 全部收起</button></div>
+<div class="tabs"><button type="button" class="tab active" data-tab="manual">✍ 手动参数生成</button><button type="button" class="tab" data-tab="reverse">🎯 按目标反推</button></div>
+<section id="tab-manual" class="tabpane">
+<div class="hint">参数按类别分区，点标题展开/收起；改完点预览下方「▶ 生成模型」。</div>
+<div class="chk"><label><input type="checkbox" id="xray" checked> 透视</label><label><input type="checkbox" id="cmp"> 计算错角对比（慢）</label><button id="reset" type="button" style="margin-left:auto">恢复默认</button></div>
+<form id="form" onsubmit="return false"></form>
+</section>
+<section id="tab-reverse" class="tabpane rvin" hidden>
+<div class="hint">给出初速、蛋重和目标出口速度，在约束内搜索 单元模式 × 每层数量 × 层数 × 吃深 × 倾斜角，列出最接近目标的方案；点「应用」写入手动参数。</div>
+<label class="fld"><span>初速 (m/s)</span><input type="number" id="rv_v0" step="1"><small class="tip">进入轴承管前的速度，与手动页「初速」同步</small></label>
+<label class="fld"><span>蛋重 / 软弹质量 (g)</span><input type="number" id="rv_m" step="0.05"><small class="tip">与手动页同步</small></label>
+<label class="fld"><span>目标出口速度 (m/s)</span><input type="number" id="rv_vt" step="1"><small class="tip">必须小于初速</small></label>
+<div id="rvExtra"></div>
+<button type="button" id="rvRun">🔍 开始反推</button>
+<div id="rvOut" class="hint"></div><div id="rvMsg"></div>
+<button type="button" id="rvToManual" style="margin-top:4px">查看 / 微调手动参数 →</button>
+</section>
+</div>
+<script>
+(function(){var K="bt_side_left";try{if(localStorage.getItem(K)==="1")document.body.classList.add("sideLeft")}catch(e){}
+document.getElementById("swapSide").onclick=function(){var on=document.body.classList.toggle("sideLeft");try{localStorage.setItem(K,on?"1":"0")}catch(e){};window.dispatchEvent(new Event("resize"))};
+function all(o){document.querySelectorAll("details.psec").forEach(function(d){d.open=o})}
+document.getElementById("secOpenAll").onclick=function(){all(true)};document.getElementById("secCloseAll").onclick=function(){all(false)};})();
+</script>
+<script>window.__ocbase = new URL("./lib/app.js", location.href).href;</script><script src="./lib/app.js"></script></body></html>
