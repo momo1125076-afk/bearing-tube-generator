@@ -21,7 +21,7 @@ await set('baseType', 'qd'); await set('shellOn', 1); await set('decoStyle', 'di
 for (const n of (process.env.QN ? [+process.env.QN] : [2, 3, 6])) {
   await set('qdN', n); await set('shellFixN', n === 6 ? 2 : 3); const q = await gen();
   const chk = await page.$eval('#check', e => e.innerText), ws = await nSolid('wholeStep'), ss = await nSolid('shellStep');
-  ok(`快拆底座 N=${n}：卡扣数、盖板 Ø≤40、弹簧 5×10×0.4、最小截面 ≥6.4、无干涉、融合 STEP 单实体、外壳 STEP 单实体`, q && q.n === n && q.od <= 40 && q.od >= q.minOD && q.clipSec >= 6.4 && chk.includes('无干涉') && chk.includes('Ø5×10') && chk.includes('线径 0.4') && ws === 1 && ss === 1 && q.shell && 2 * q.shell.ro <= 40, JSON.stringify({ n: q && q.n, od: q && q.od, minOD: q && q.minOD, ws, ss, clipSec: q && q.clipSec, chk: chk.slice(0, 260) }));
+  ok(`快拆底座 N=${n}：卡扣数、盖板 Ø≤40、弹簧 5×10×0.4、卡扣总截面 ≥ 内管座最弱截面 228 mm²、无干涉、融合 STEP 单实体、外壳 STEP 单实体`, q && q.n === n && q.od <= 40 && q.od >= q.minOD && q.ratio >= 0.999 && q.clipT >= 2.86 && chk.includes('不低于内管座') && chk.includes('无干涉') && chk.includes('Ø5×10') && chk.includes('线径 0.4') && ws === 1 && ss === 1 && q.shell && 2 * q.shell.ro <= 40, JSON.stringify({ n: q && q.n, od: q && q.od, minOD: q && q.minOD, ws, ss, clipSec: q && q.clipSec, chk: chk.slice(0, 260) }));
 }
 await set('qdDiscOD', 20); const q2 = await gen(); ok('盖板外径下限夹紧', q2.od === q2.minOD && q2.od > 20, JSON.stringify(q2.od));
 await set('qdDiscOD', 50); const q3 = await gen(); ok('盖板外径上限 40', q3.od === 40, String(q3.od)); await set('qdDiscOD', 36);
